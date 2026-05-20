@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личен Гласов Асистент Naz Dej - v1.2.0</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 30px;
+            margin: 0;
+        }
+        /* Скрит контейнер за фоново изображение, използващ твоята снимка */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('IMG_20251012_022701.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15; /* Лека прозрачност, за да се чете лесно текстът */
+            z-index: -1;
+        }
+        h1 {
+            color: #ff4081;
+        }
+        .main-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(30, 30, 30, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+        .section {
+            margin: 25px 0;
+            padding: 15px;
+            border-bottom: 1px solid #444;
+            text-align: left;
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        button, select, input {
+            width: 100%;
+            padding: 12px;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        button:focus, select:focus, input:focus {
+            outline: 3px solid #ff4081; /* Ясен визуален и софтуерен фокус за клавиатура */
+        }
+        .status-box {
+            background: #000;
+            padding: 15px;
+            border-radius: 5px;
+            min-height: 50px;
+            margin-top: 10px;
+            border-left: 5px solid #ff4081;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Фоновата снимка е свързана тук -->
+    <div class="background-container" role="presentation"></div>
+
+    <div class="main-container" role="main">
+        <h1>Гласов Асистент Naz Dej</h1>
+        <p>Версия 1.2.0 - Базова структура и Настройки</p>
+
+        <!-- СЕКЦИЯ 1: СТАТУС И СЛУШАНЕ -->
+        <div class="section">
+            <h2>Управление и Статус</h2>
+            <button id="btn-listen" aria-label="Стартирай гласово слушане">Включи Микрофона</button>
+            <div class="status-box" id="status-display" aria-live="polite">
+                Статус: Готов за работа. Микрофонът е изключен.
+            </div>
+        </div>
+
+        <!-- СЕКЦИЯ 2: НАСТРОЙКИ МЕНЮ -->
+        <div class="section" aria-label="Меню с настройки">
+            <h2>Разширени Настройки</h2>
+
+            <!-- Връзка с приложения -->
+            <label for="app-integration">Свързване с външни платформи:</label>
+            <select id="app-integration" aria-label="Избор на платформа за търсене на музика">
+                <option value="youtube">YouTube (Автоматично отваряне в браузъра)</option>
+                <option value="local">Локален плеър (В разработка...)</option>
+            </select>
+
+            <!-- Контрол на гласа и чувствителността -->
+            <label for="mic-sensitivity">Чувствителност на микрофона:</label>
+            <select id="mic-sensitivity" aria-label="Избор на чувствителност на микрофона">
+                <option value="high">Висока (Постоянно слушане)</option>
+                <option value="medium" selected>Нормална (Стандартна)</option>
+                <option value="low">Ниска (Ръчно задействане)</option>
+            </select>
+
+            <label for="voice-speed">Скорост на говорене на асистента:</label>
+            <select id="voice-speed" aria-label="Избор на скорост на говорене">
+                <option value="0.8">По-бавно</option>
+                <option value="1" selected>Нормално</option>
+                <option value="1.2">По-бързо</option>
+            </select>
+
+            <!-- Общи настройки и Персонализация -->
+            <label for="ui-theme">Тема на интерфейса:</label>
+            <select id="ui-theme" aria-label="Избор на тема на екрана">
+                <option value="dark" selected>Тъмна тема (Препоръчително)</option>
+                <option value="light">Светла тема</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        // Базова логика за бутона и симулация на търсене
+        const btnListen = document.getElementById('btn-listen');
+        const statusDisplay = document.getElementById('status-display');
+        const appIntegration = document.getElementById('app-integration');
+
+        btnListen.addEventListener('click', () => {
+            statusDisplay.textContent = "Статус: Слушам... Кажете команда (например: 'Пусни песен на Naz Dej')";
+            
+            // Тук екранният четец ще извести промяната веднага благодарение на aria-live="polite"
+            
+            // Кратка симулация: след 4 секунди ще симулираме команда за пускане на песен в YouTube
+            setTimeout(() => {
+                if (appIntegration.value === 'youtube') {
+                    statusDisplay.textContent = "Статус: Отварям търсене в YouTube за Naz Dej...";
+                    // Отваряне на YouTube с търсене в нов раздел
+                    window.open('https://www.youtube.com/results?search_query=Naz+Dej', '_blank');
+                }
+            }, 4000);
+        });
+    </script>
+</body>
+</html>
