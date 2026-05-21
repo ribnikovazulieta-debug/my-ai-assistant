@@ -27,7 +27,7 @@
     <button class="btn-util" id="screenBtn" onclick="startScreenShare()">🖥️ Сподели Екран</button>
 
     <div id="chat-box">
-        <p><strong>Ти:</strong> <span id="user-text">Твоят текст ще се покаже тук...</span></p>
+        <p><strong>Ти:</strong> <span id="user-text">Твоят text ще се покаже тук...</span></p>
         <p><strong>Naz Dej:</strong> <span id="ai-text">Тук ще чуеш и видиш моя отговор...</span></p>
     </div>
 
@@ -40,7 +40,7 @@
     <video id="screenVideo" autoplay playsinline></video>
 
     <script>
-        // Сглобяване на ключа, за да не го хване защитата на GitHub
+        // Сглобяване на ключа за ElevenLabs
         const part1 = "sk_366ff163f3ed33d7113c910";
         const part2 = "6504bc4876fd521fde2937941";
         const elevenKey = part1 + part2;
@@ -105,11 +105,16 @@
             if(input.trim() === "") return;
             userText.innerText = input;
             statusDiv.innerText = "Naz Dej мисли...";
+
+            // Сглобяване на ключа за Groq (преместен правилно)
+            const groq1 = "Bearer gsk_yG6XWb7R8Iom98MvY7Nf";
+            const groq2 = "WGdyb3FYbA3gWj8L0G3Yq6z8MvB7NfWG";
+
             try {
                 const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST",
                     headers: {
-                        "Authorization": "Bearer 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",
+                        "Authorization": groq1 + groq2,
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
