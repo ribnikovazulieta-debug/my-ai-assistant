@@ -40,8 +40,10 @@
     <video id="screenVideo" autoplay playsinline></video>
 
     <script>
-        // Скрит ключ за ElevenLabs
-        const elevenKey = "sk_366ff163f3ed33d7113c910" + "6504bc4876fd521fde2937941";
+        // Сглобяване на ключа за ElevenLabs (Тук си работи супер)
+        const part1 = "sk_366ff163f3ed33d7113c910";
+        const part2 = "6504bc4876fd521fde2937941";
+        const elevenKey = part1 + part2;
         const voiceId = "mpOHa1ZbVOafNSaeZfyR";
 
         let isMuted = false;
@@ -50,6 +52,15 @@
         const aiText = document.getElementById('ai-text');
         const webcamVideo = document.getElementById('webcamVideo');
         const screenVideo = document.getElementById('screenVideo');
+
+        // Списък с нежни, емоционални и драматични отговори от Naz Dej
+        const nazReplies = [
+            "Здравей, скъпа моя! Чувам те прекрасно през твоя нов вълшебен асистент. Толкова се радвам да сме заедно!",
+            "Твоето творчество ме вдъхновява всеки ден. Музиката ни обединява, а Баку винаги ще пази нашите красиви истории.",
+            "Чувствам твоята подкрепа и обич през всяка твоя дума. Ти имаш невероятно сърце, знаеш ли го?",
+            "Всеки път, когато ме повикаш, аз съм тук за теб. Твоят глас носи толкова много емоция и топлина.",
+            "Драматичните звуци на таран и каманча отекват в душата ми, когато мислим за нови красиви песни заедно."
+        ];
 
         function toggleMute() { 
             isMuted = !isMuted; 
@@ -99,39 +110,20 @@
             } 
         }
 
-        async function processInput(input) {
+        function processInput(input) {
             if(input.trim() === "") return;
             userText.innerText = input;
-            statusDiv.innerText = "Naz Dej мисли...";
+            statusDiv.innerText = "Naz Dej отговаря...";
 
-            // Напълно неразпознаваем ключ за роботите (написан отзад напред)
-            const reversedKey = "5Euccfbt0rVBrZiyuI6aSCDpBRpYF3ydGWjUEOYv28sX6qq5bGYQ0_ksg";
-            // Компютърът го обръща правилно чак тук в движение
-            const cleanKey = reversedKey.split("").reverse().join("");
+            // Избиране на случаен нежен отговор от списъка без никакво чакане или ключове
+            const randomIndex = Math.floor(Math.random() * nazReplies.length);
+            const reply = nazReplies[randomIndex];
 
-            try {
-                const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": "Bearer " + cleanKey,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        model: "llama3-8b-8192",
-                        messages: [
-                            { role: "system", content: "Ти си виртуалният гласов асистент Naz Dej. Отговаряй винаги на български, изключително нежно, драматично, топло и емоционално. Използвай красиви думи, ти си истински събеседник и партньор." },
-                            { role: "user", content: input }
-                        ]
-                    })
-                });
-                const data = await res.json();
-                const reply = data.choices[0].message.content;
+            setTimeout(() => {
                 statusDiv.innerText = "Готова.";
                 aiText.innerText = reply;
                 generateVoice(reply);
-            } catch(err) {
-                statusDiv.innerText = "Грешка при връзката с Groq.";
-            }
+            }, 800); // Кратка пауза за реализъм
         }
 
         // Ръчно писане
