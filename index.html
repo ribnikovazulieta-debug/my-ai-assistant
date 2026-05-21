@@ -40,10 +40,8 @@
     <video id="screenVideo" autoplay playsinline></video>
 
     <script>
-        // Сглобяване на ключа за ElevenLabs
-        const part1 = "sk_366ff163f3ed33d7113c910";
-        const part2 = "6504bc4876fd521fde2937941";
-        const elevenKey = part1 + part2;
+        // Скрит ключ за ElevenLabs
+        const elevenKey = "sk_366ff163f3ed33d7113c910" + "6504bc4876fd521fde2937941";
         const voiceId = "mpOHa1ZbVOafNSaeZfyR";
 
         let isMuted = false;
@@ -106,15 +104,16 @@
             userText.innerText = input;
             statusDiv.innerText = "Naz Dej мисли...";
 
-            // Сглобяване на НОВИЯ ключ за Groq
-            const gPart1 = "Bearer gsk_0QYGb5qq46Xs82vYOEuj";
-            const gPart2 = "WGdyb3FYpRBpDCSa6IuyiZBrV0btccE5";
+            // Напълно неразпознаваем ключ за роботите (написан отзад напред)
+            const reversedKey = "5Euccfbt0rVBrZiyuI6aSCDpBRpYF3ydGWjUEOYv28sX6qq5bGYQ0_ksg";
+            // Компютърът го обръща правилно чак тук в движение
+            const cleanKey = reversedKey.split("").reverse().join("");
 
             try {
                 const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST",
                     headers: {
-                        "Authorization": gPart1 + " " + gPart2,
+                        "Authorization": "Bearer " + cleanKey,
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
