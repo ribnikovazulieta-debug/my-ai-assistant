@@ -27,7 +27,7 @@
     <button class="btn-util" id="screenBtn" onclick="startScreenShare()">🖥️ Сподели Екран</button>
 
     <div id="chat-box">
-        <p><strong>Ти:</strong> <span id="user-text">Твоят text ще се покаже тук...</span></p>
+        <p><strong>Ти:</strong> <span id="user-text">Твоят текст ще се покаже тук...</span></p>
         <p><strong>Naz Dej:</strong> <span id="ai-text">Тук ще чуеш и видиш моя отговор...</span></p>
     </div>
 
@@ -106,7 +106,7 @@
             userText.innerText = input;
             statusDiv.innerText = "Naz Dej мисли...";
 
-            // Сглобяване на НОВИЯ ключ за Groq, нарязан тайно на парчета
+            // Сглобяване на НОВИЯ ключ за Groq
             const gPart1 = "Bearer gsk_0QYGb5qq46Xs82vYOEuj";
             const gPart2 = "WGdyb3FYpRBpDCSa6IuyiZBrV0btccE5";
 
@@ -114,10 +114,11 @@
                 const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST",
                     headers: {
-                    ""                        "Authorization": gPart1 + " " + gPart2,
-                    "Content-Type": "application/json"
-              },   body: JSON.stringify({
-                                            model: "llama3-8b-8192",
+                        "Authorization": gPart1 + " " + gPart2,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: "llama3-8b-8192",
                         messages: [
                             { role: "system", content: "Ти си виртуалният гласов асистент Naz Dej. Отговаряй винаги на български, изключително нежно, драматично, топло и емоционално. Използвай красиви думи, ти си истински събеседник и партньор." },
                             { role: "user", content: input }
