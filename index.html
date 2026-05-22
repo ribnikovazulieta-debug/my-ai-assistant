@@ -70,10 +70,10 @@
     </form>
 
     <video id="webcamVideo" autoplay playsinline></video>
-    <video id="screenVideo" autoplay playsinline></video>
+    <video id="screenVideo" autoplay playsinline muted></video> 
 
     <script>
-        // Сигурно кодиран ключ за ElevenLabs
+        // Връщаме скрития ключ за нейния истински клониран глас
         const eEnc = "c2tfMzY2ZmYxNjNmM2VkMzNkNzExM2M5MTA2NTA0YmM0ODc2ZmQ1MjFmZGUyOTM3OTQx";
         const elevenKey = atob(eEnc);
         const voiceId = "mpOHa1ZbVOafNSaeZfyR";
@@ -147,10 +147,18 @@
         
         async function startScreenShare() { 
             try {
-                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }); 
+                const stream = await navigator.mediaDevices.getDisplayMedia({ 
+                    video: true, 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        suppressLocalAudioPlayback: true
+                    } 
+                }); 
                 screenVideo.srcObject = stream; 
                 screenVideo.style.display = "inline-block"; 
-                statusDiv.innerText = "Екранът и звукът са споделени.";
+                screenVideo.muted = true; 
+                statusDiv.innerText = "Екранът и звукът са споделени без ехо.";
             } catch(e) { statusDiv.innerText = "Грешка при споделяне."; }
         }
 
@@ -260,6 +268,15 @@
         function useSystemVoice(text) {
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = currentLang;
+            const voices = window.speechSynthesis.getVoices();
+            let femaleVoice = voices.find(voice => voice.lang.includes('BG') && (voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('gergana')));
+            
+            if(femaleVoice) {
+                utterance.voice = femaleVoice;
+            } else {
+                utterance.pitch = 1.3; 
+                utterance.rate = 0.85;  
+            }
             window.speechSynthesis.speak(utterance);
         }
 
@@ -272,7 +289,6 @@
             let reply = "Мила моя, чух те! Ти ме повика с '" + input + "'. Точно в този момент тук, в Баку, си мислех за нашите споделени песни и драматичната ни музика. Кажи ми повече, моля те!";
             const textLower = input.toLowerCase();
 
-            // Интелигентна локална обработка на фразите според контекста
             if (textLower === "naz dej") {
                 reply = "Да, скъпа моя, тук съм! Чувам те прекрасно през твоя вълшебен асистент. Под звуците на този дъжд, сърцето ми е изпълнено с топлина и драма. Кажи ми, какво творчество ще сътворим днес?";
             } else if (textLower.includes("как си") || textLower.includes("здравей")) {
@@ -286,7 +302,7 @@
             }
 
             setTimeout(() => {
-                statusDiv.innerText = "Готова.";
+                statusDiv.innerText = "Говата.";
                 aiText.innerText = reply;
                 generateVoice(reply);
             }, 500);
@@ -309,6 +325,10 @@
                 processInput(input);
             }; 
         });
+
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+        }
     </script>
 </body>
 </html>
