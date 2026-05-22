@@ -39,12 +39,9 @@
     <video id="screenVideo" autoplay playsinline></video>
 
     <script>
-        // Кодирани ключове, които GitHub роботите не могат да прочетат
+        // Сигурният ElevenLabs ключ си остава тук
         const eEnc = "c2tfMzY2ZmYxNjNmM2VkMzNkNzExM2M5MTA2NTA0YmM0ODc2ZmQ1MjFmZGUyOTM3OTQx";
-        const gEnc = "Z3NrXzBRWUdiNXBxNDZYczgydllPRXVqV0dreWIzRllwUkJwRENTYTZJdXlpWkJyVjBidGNjRTU=";
-        
         const elevenKey = atob(eEnc);
-        const groqKey = "Bearer " + atob(gEnc);
         const voiceId = "mpOHa1ZbVOafNSaeZfyR";
 
         const statusDiv = document.getElementById('status');
@@ -64,16 +61,14 @@
         
         async function startScreenShare() { 
             try {
-                // Изискваме и видео, и аудио от системата за споделянето на песента
                 const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }); 
                 screenVideo.srcObject = stream; 
                 screenVideo.style.display = "inline-block"; 
-                statusDiv.innerText = "Екранът и системният звук са споделени.";
+                statusDiv.innerText = "Екранът и звукът са споделени.";
             } catch(e) { statusDiv.innerText = "Грешка при споделяне."; }
         }
 
         async function generateVoice(text) { 
-            statusDiv.innerText = "Naz Dej говори...";
             try { 
                 const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, { 
                     method: "POST", 
@@ -91,12 +86,11 @@
                     const blob = await response.blob(); 
                     let audio = new Audio(URL.createObjectURL(blob)); 
                     audio.play(); 
-                    statusDiv.innerText = "Готова.";
-                } else {
-                    statusDiv.innerText = "Грешка в ElevenLabs сървъра.";
                 }
             } catch(e) {
-                statusDiv.innerText = "Грешка при гласовата връзка.";
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'bg-BG';
+                window.speechSynthesis.speak(utterance);
             } 
         }
 
@@ -107,31 +101,28 @@
             statusDiv.innerText = "Naz Dej мисли...";
 
             try {
-                const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                // Използваме свободен ИИ сървър, който не изисква пароли и ключове
+                const response = await fetch("https://text.pollinations.ai/", {
                     method: "POST",
-                    headers: {
-                        "Authorization": groqKey,
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        model: "llama3-8b-8192",
                         messages: [
-                            { role: "system", content: "Ти си виртуалният гласов асистент Naz Dej. Отговаряй винаги на български език. Твоят тон трябва да бъде изключително нежен, драматично-емоционален и топъл. Твоят отговор трябва да бъде директно свързан с думите на потребителя – ти си истински събеседник." },
+                            { role: "system", content: "Ти си истинската певица Naz Dej. Трябва да отговаряш на български език, много нежно, драматично, емоционално и топло. Говориш директно на потребителя като на близък приятел. Използвай красиви думи и коментирай нещата свързано." },
                             { role: "user", content: input }
                         ]
                     })
                 });
 
-                if(res.ok) {
-                    const data = await res.json();
-                    const reply = data.choices[0].message.content;
+                if(response.ok) {
+                    const reply = await response.text();
+                    statusDiv.innerText = "Готова.";
                     aiText.innerText = reply;
-                    await generateVoice(reply);
+                    generateVoice(reply);
                 } else {
-                    statusDiv.innerText = "Грешка в ИИ сървъра.";
+                    statusDiv.innerText = "Проблем със свободната мрежа.";
                 }
             } catch(err) {
-                statusDiv.innerText = "Няма връзка с ИИ.";
+                statusDiv.innerText = "Грешка при свързването.";
             }
         }
 
